@@ -1,0 +1,11 @@
+sqs:
+  local:
+    params:
+      region: localhost
+      endpoint: http://localhost:9324
+      apiVersion: "2012-11-05"
+    queueName: retro-gen-q
+  remote:
+    params:
+      apiVersion: "2012-11-05"
+    queueName: retro-gen-q
