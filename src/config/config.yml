@@ -8,4 +8,4 @@ sqs:
   remote:
     params:
       apiVersion: "2012-11-05"
-    queueName: retro-gen-q
+    queueName: retro-gen-${BRANCH}-queue
