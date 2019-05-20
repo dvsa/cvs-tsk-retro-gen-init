@@ -89,7 +89,7 @@ class SQMockClient {
      * @returns {{}}
      */
     public customizeRequests(): any {
-        return {}
+        return {};
     }
 
 }
