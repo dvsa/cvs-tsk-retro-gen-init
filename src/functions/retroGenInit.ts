@@ -25,9 +25,11 @@ const retroGenInit: Handler = async (event: any, context?: Context, callback?: C
     const sqService: SQService = Injector.resolve<SQService>(SQService);
     const sendMessagePromises: Array<Promise<PromiseResult<SendMessageResult, AWSError>>> = [];
 
-    // Add each record to the queue
+    // Add each visit record to the queue
     records.forEach(async (record: any) => {
-        sendMessagePromises.push(sqService.sendMessage(JSON.stringify(record)));
+        if (record.activityType === "visit") {
+            sendMessagePromises.push(sqService.sendMessage(JSON.stringify(record)));
+        }
     });
 
     return Promise.all(sendMessagePromises)
