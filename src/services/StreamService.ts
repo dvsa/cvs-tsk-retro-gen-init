@@ -8,9 +8,9 @@ class StreamService {
      * to a JS object
      * @param event
      */
-    public static getActivitiesStream(event: any) {
-        return event.Records.filter((record: DynamoDBRecord) => { // Retrieve "MODIFY" events
-            return record.eventName === "MODIFY";
+    public static getVisitsStream(event: any) {
+        return event.Records.filter((record: DynamoDBRecord) => { // Retrieve "MODIFY" visit events
+            return record.eventName === "MODIFY" && record.dynamodb && record.dynamodb.NewImage && record.dynamodb.NewImage.activityType.S === "visit";
         })
         .map((record: DynamoDBRecord) => { // Convert to JS object
             if (record.dynamodb && record.dynamodb.NewImage) {

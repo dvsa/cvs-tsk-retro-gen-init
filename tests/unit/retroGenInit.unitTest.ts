@@ -11,7 +11,7 @@ import {ReceiveMessageResult, SendMessageResult} from "aws-sdk/clients/sqs";
 import {AWSError} from "aws-sdk";
 
 describe("retro-gen-init", () => {
-    const event: any = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/stream-event.json"), "utf8"));
+    const event = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/stream-event.json"), "utf8"));
     let processedEvent: any;
 
     context("StreamService", () => {
@@ -30,9 +30,9 @@ describe("retro-gen-init", () => {
             }
         ];
 
-        context("when fetching an activity stream", () => {
-            it("should result in an array of filtered js objects", () => {
-                processedEvent = StreamService.getActivitiesStream(event);
+        context("when fetching an activity stream with both visits and wait times", () => {
+            it("should result in an array of filtered js objects containing only visits", () => {
+                processedEvent = StreamService.getVisitsStream(event);
                 expect(processedEvent).to.eql(expectedResult);
             });
         });
