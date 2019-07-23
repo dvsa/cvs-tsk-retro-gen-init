@@ -18,18 +18,16 @@ const retroGenInit: Handler = async (event: any, context?: Context, callback?: C
         return;
     }
 
-    // Convert the received event into a readable array of filtered test results
-    const records: any[] = StreamService.getActivitiesStream(event);
+    // Convert the received event into a readable array of filtered visits
+    const records: any[] = StreamService.getVisitsStream(event);
 
     // Instantiate the Simple Queue Service
     const sqService: SQService = Injector.resolve<SQService>(SQService);
     const sendMessagePromises: Array<Promise<PromiseResult<SendMessageResult, AWSError>>> = [];
 
-    // Add each visit record to the queue
+    // Add each record to the queue
     records.forEach(async (record: any) => {
-        if (record.activityType === "visit") {
             sendMessagePromises.push(sqService.sendMessage(JSON.stringify(record)));
-        }
     });
 
     return Promise.all(sendMessagePromises)
