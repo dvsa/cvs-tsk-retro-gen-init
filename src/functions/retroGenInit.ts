@@ -27,7 +27,7 @@ const retroGenInit: Handler = async (event: any, context?: Context, callback?: C
 
     // Add each record to the queue
     records.forEach(async (record: any) => {
-            sendMessagePromises.push(sqService.sendMessage(JSON.stringify(record)));
+        sendMessagePromises.push(sqService.sendMessage(JSON.stringify(record)));
     });
 
     return Promise.all(sendMessagePromises)
