@@ -11,7 +11,7 @@ import {ReceiveMessageResult, SendMessageResult} from "aws-sdk/clients/sqs";
 import {AWSError} from "aws-sdk";
 
 describe("retro-gen-init", () => {
-    const event = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/stream-event.json"), "utf8"));
+    const event: any = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/stream-event.json"), "utf8"));
     let processedEvent: any;
 
     context("StreamService", () => {
