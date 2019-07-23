@@ -1,4 +1,4 @@
-import {Callback, Context, Handler} from "aws-lambda";
+import {Callback, Context, DynamoDBRecord, Handler} from "aws-lambda";
 import {AWSError} from "aws-sdk";
 import {Injector} from "../models/injector/Injector";
 import {SQService} from "../services/SQService";
@@ -19,7 +19,7 @@ const retroGenInit: Handler = async (event: any, context?: Context, callback?: C
     }
 
     // Convert the received event into a readable array of filtered visits
-    const records: any[] = StreamService.getVisitsStream(event);
+    const records: DynamoDBRecord[] = StreamService.getVisitsStream(event);
 
     // Instantiate the Simple Queue Service
     const sqService: SQService = Injector.resolve<SQService>(SQService);
