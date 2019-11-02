@@ -1,17 +1,12 @@
-import {describe} from "mocha";
-import {expect} from "chai";
-import {Injector} from "../../src/models/injector/Injector";
 import {SQService} from "../../src/services/SQService";
 import {SQMockClient} from "../models/SQMockClient";
-import * as fs from "fs";
-import * as path from "path";
 import {StreamService} from "../../src/services/StreamService";
 import {PromiseResult} from "aws-sdk/lib/request";
 import {ReceiveMessageResult, SendMessageResult} from "aws-sdk/clients/sqs";
 import {AWSError} from "aws-sdk";
+import event from "../resources/stream-event.json";
 
 describe("retro-gen-init", () => {
-    const event: any = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/stream-event.json"), "utf8"));
     let processedEvent: any;
 
     context("StreamService", () => {
@@ -33,13 +28,14 @@ describe("retro-gen-init", () => {
         context("when fetching an activity stream with both visits and wait times", () => {
             it("should result in an array of filtered js objects containing only visits", () => {
                 processedEvent = StreamService.getVisitsStream(event);
-                expect(processedEvent).to.eql(expectedResult);
+                expect(processedEvent).toEqual(expectedResult);
             });
         });
     });
 
     context("SQService", () => {
-        const sqService: SQService = Injector.resolve<SQService>(SQService, [SQMockClient]);
+        // @ts-ignore
+        const sqService: SQService = new SQService(new SQMockClient());
         sqService.sqsClient.createQueue({
             QueueName: "retro-gen-q"
         });
@@ -52,17 +48,17 @@ describe("retro-gen-init", () => {
                     sendMessagePromises.push(sqService.sendMessage(JSON.stringify(record)));
                 });
 
+                expect.assertions(0);
                 return Promise.all(sendMessagePromises)
                 .catch((error: AWSError) => {
-                    console.error(error);
-                    expect.fail();
+                    expect(error).toBeFalsy();
                 });
             });
 
             it("should successfully read the added records from the queue", () => {
                 return sqService.getMessages()
                 .then((messages: ReceiveMessageResult) => {
-                    expect(messages.Messages!.map((message) => JSON.parse(message.Body as string))).to.eql(processedEvent);
+                    expect(messages.Messages!.map((message) => JSON.parse(message.Body as string))).toEqual(processedEvent);
                 });
             });
         });

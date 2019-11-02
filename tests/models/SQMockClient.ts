@@ -10,6 +10,10 @@ interface IQueue {
 class SQMockClient {
     private readonly queues: IQueue[] = [];
 
+    /**
+     * unused
+     * @param queue
+     */
     public createQueue(queue: CreateQueueRequest) {
         this.queues.push({
             queueName: queue.QueueName,
