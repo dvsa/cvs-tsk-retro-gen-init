@@ -33,6 +33,7 @@ const retroGenInit: Handler = async (event: any, context?: Context, callback?: C
     return Promise.all(sendMessagePromises)
     .catch((error: AWSError) => {
         console.error(error);
+        throw error;
     });
 };
 
