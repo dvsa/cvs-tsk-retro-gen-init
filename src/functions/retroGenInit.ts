@@ -12,7 +12,7 @@ import {StreamService} from "../services/StreamService";
  * @param context - λ Context
  * @param callback - callback function
  */
-const retroGenInit: Handler = async (event: any, context?: Context, callback?: Callback): Promise<void | Array<PromiseResult<SendMessageResult, AWSError>>> => {
+const retroGenInit: Handler = async (event: any, context?: Context, callback?: Callback): Promise<void | Array<PromiseResult<SendMessageResult, AWSError>>> => {
     if (!event) {
         console.error("ERROR: event is not defined.");
         return;
@@ -31,10 +31,13 @@ const retroGenInit: Handler = async (event: any, context?: Context, callback?: C
     });
 
     return Promise.all(sendMessagePromises)
-    .catch((error: AWSError) => {
-        console.error(error);
-        throw error;
-    });
+        .catch((error: AWSError) => {
+            console.error(error);
+            console.log("records");
+            console.log(records);
+            // Lambda will retry up to X times or until the message expires, after which the message will be sent to the dlq.
+            throw error;
+        });
 };
 
 export {retroGenInit};
