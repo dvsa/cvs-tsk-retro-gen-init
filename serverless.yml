@@ -1,17 +1,21 @@
 service: cvs-svc-retro-gen-init
-
+configValidationMode: warn
 provider:
+  lambdaHashingVersion: 20201221
   name: aws
-  runtime: nodejs8.10
+  runtime: nodejs10.x
   stage: dev
-  tracing: true # enable tracing
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - "xray:PutTraceSegments"
-        - "xray:PutTelemetryRecords"
-      Resource:
-        - "*"
+  tracing:
+    lambda: true
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "xray:PutTraceSegments"
+            - "xray:PutTelemetryRecords"
+          Resource:
+            - "*"
 
 plugins:
   - serverless-plugin-typescript
