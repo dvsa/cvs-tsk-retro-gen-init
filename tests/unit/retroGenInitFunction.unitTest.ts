@@ -9,6 +9,15 @@ describe("retroGenInit  Function",  () => {
     jest.restoreAllMocks();
     jest.resetModuleRegistry();
   });
+
+  describe("if the event is undefined", () => {
+    it("should return undefined", async () => {
+      expect.assertions(1);
+      const result = await retroGenInit(undefined, ctx, () => { return; });
+      expect(result).toBe(undefined);
+    });
+  });
+
   describe("with good event", () => {
     it("should invoke SQS service with correct params", async () => {
       const sendMessage = jest.fn().mockResolvedValue("Success");
