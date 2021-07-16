@@ -4,7 +4,7 @@
   "description": "Certificate generation initiation task",
   "main": "handler.js",
   "engines": {
-    "node": "10.18.1",
+    "node": "14.*",
     "npm": "5.6.0"
   },
   "scripts": {
@@ -14,16 +14,15 @@
     "build:dev": "node_modules/typescript/bin/tsc && npm run build:copy",
     "build:copy": "find src -type f \\( -name \"*.yml\" -or -name \"*.json\" \\) | cpio -pdm .build && find tests -type f \\( -name \"*.yml\" -or -name \"*.json\" \\)  | cpio -pdm .build",
     "build:docker": "docker-compose -f docker-compose.yml up -d --build",
-    "prepush": "BRANCH=local npm test && npm run build",
-    "predeploy": "npm install && npm run prepush",
+    "prepush": "npm test && npm run build && npm run test-i",
     "security-checks": "git secrets --scan && git log -p | scanrepo",
-    "test": "BRANCH=local SLS_DEBUG=* AWS_XRAY_CONTEXT_MISSING=LOG_ERROR jest --testMatch=\"**/*.unitTest.ts\"",
-    "test-i": "BRANCH=local jest --testMatch=\"**/*.intTest.ts\" --runInBand --passWithNoTests",
-    "tslint": "tslint src/**/*.ts tests/**/*.ts",
-    "sonar-scanner": "npm run tslint && npm run coverage && sonar-scanner",
-    "coverage": "npm run test -- --coverage",
-    "audit:check": "npm audit --json | audit-filter --nsp-config=.nsprc --audit=-",
-    "audit-dep": "npm audit",
+    "test:unit": "BRANCH=local SLS_DEBUG=* AWS_XRAY_CONTEXT_MISSING=LOG_ERROR jest --testMatch=\"**/*.unitTest.ts\" --runInBand --detectOpenHandles --forceExit",
+    "test": "npm run test:unit -- --coverage",
+    "test-i": "echo 'nothing to do'",
+    "lint": "tslint src/**/*.ts tests/**/*.ts --fix",
+    "format": "prettier --write .",
+    "sonar-scanner": "sonar-scanner",
+    "audit": "npm audit",
     "package": "mkdir ${ZIP_NAME} && cp package.json package-lock.json ${ZIP_NAME}/ && cp -r .build/src/* ${ZIP_NAME}/ && cd ${ZIP_NAME} && npm ci --production && rm package.json package-lock.json && zip -qr ../${ZIP_NAME}.zip .",
     "tools-setup": "echo 'nothing to do'"
   },
@@ -68,7 +67,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run security-checks && npm audit && npm run tslint",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "npm run security-checks && npm run audit && npm run lint && npm run format",
       "pre-push": "npm run prepush"
     }
   }
