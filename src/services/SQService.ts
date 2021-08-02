@@ -4,7 +4,7 @@ import {Configuration} from "../utils/Configuration";
 import {PromiseResult} from "aws-sdk/lib/request";
 import {AWSError, config as AWSConfig} from "aws-sdk";
 /* tslint:disable */
-const AWSXRay = require("aws-xray-sdk");
+// const AWSXRay = require("aws-xray-sdk");
 /* tslint:enable */
 
 /**
@@ -21,7 +21,12 @@ class SQService {
      */
     constructor(sqsClient: SQS) {
         const config: any = Configuration.getInstance().getConfig();
-        this.sqsClient = AWSXRay.captureAWSClient(sqsClient);
+        console.log("sqsClient");
+        console.log(sqsClient);
+        // this.sqsClient = AWSXRay.captureAWSClient(sqsClient);
+        this.sqsClient = sqsClient;
+        console.log("this.sqsClient");
+        console.log(this.sqsClient);
 
         if (!config.sqs) {
             throw new Error("SQS config is not defined in the config file.");
@@ -30,8 +35,12 @@ class SQService {
         // Not defining BRANCH will default to local
         const env: string = (!process.env.BRANCH || process.env.BRANCH === "local") ? "local" : "remote";
         this.config = config.sqs[env];
+        console.log("this.config");
+        console.log(this.config);
 
         AWSConfig.sqs = this.config.params;
+        console.log("AWSConfig.sqs");
+        console.log(AWSConfig.sqs);
     }
 
     /**

@@ -9,3 +9,7 @@ sqs:
     params:
       apiVersion: "2012-11-05"
     queueName: retro-gen-${BRANCH}-queue
+  localstack:
+    params:
+      apiVersion: "2012-11-05"
+    queueName: retro-gen-${BRANCH}-queue
