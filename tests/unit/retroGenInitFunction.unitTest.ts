@@ -33,9 +33,11 @@ describe("retroGenInit  Function", () => {
       SQService.prototype.sendMessage = jest.fn().mockRejectedValue(myError);
 
       expect.assertions(1);
-      await expect(retroGenInit({}, ctx, () => {})).rejects.toThrow(
-        myError.message
-      );
+      await expect(
+        retroGenInit({}, ctx, () => {
+          console.log("");
+        })
+      ).rejects.toThrow(myError.message);
     });
   });
 });
