@@ -1,13 +1,13 @@
-import mockContext = require("aws-lambda-mock-context");
+import { Context } from "aws-lambda";
+import { retroGenInit } from "../../src/functions/retroGenInit";
 import { SQService } from "../../src/services/SQService";
 import { StreamService } from "../../src/services/StreamService";
-import { retroGenInit } from "../../src/functions/retroGenInit";
 
 describe("retroGenInit  Function", () => {
-  const ctx = mockContext();
+  const ctx = "" as unknown as Context;
   afterAll(() => {
     jest.restoreAllMocks();
-    jest.resetModuleRegistry();
+    jest.resetModules();
   });
   describe("with good event", () => {
     it("should invoke SQS service with correct params", async () => {
@@ -33,13 +33,9 @@ describe("retroGenInit  Function", () => {
       SQService.prototype.sendMessage = jest.fn().mockRejectedValue(myError);
 
       expect.assertions(1);
-      try {
-        await retroGenInit({}, ctx, () => {
-          return;
-        });
-      } catch (e) {
-        expect(e.message).toEqual(myError.message);
-      }
+      await expect(retroGenInit({}, ctx, () => {})).rejects.toThrow(
+        myError.message
+      );
     });
   });
 });
