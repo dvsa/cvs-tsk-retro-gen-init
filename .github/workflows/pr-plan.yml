@@ -22,7 +22,7 @@ jobs:
         with:
           role-to-assume: ${{ secrets.CVS_MGMT_AWS_ROLE }}
           aws-region: ${{ secrets.DVSA_AWS_REGION }}
-          role-session-name: "cvs-tsk-retro=gen"
+          role-session-name: "cvs-tsk-retro-gen-init"
       - uses: aws-actions/aws-secretsmanager-get-secrets@v1
         with:
           secret-ids: sonarqube-gha
