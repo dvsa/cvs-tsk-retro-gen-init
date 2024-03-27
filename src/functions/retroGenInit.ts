@@ -1,9 +1,9 @@
 import { Callback, Context, DynamoDBRecord, Handler } from "aws-lambda";
-import { AWSError } from "aws-sdk";
+import { ServiceException } from "@smithy/smithy-client";
+import { SendMessageCommandOutput } from "@aws-sdk/client-sqs";
 import { Injector } from "../models/injector/Injector";
 import { SQService } from "../services/SQService";
 import { PromiseResult } from "aws-sdk/lib/request";
-import { SendMessageResult } from "aws-sdk/clients/sqs";
 import { StreamService } from "../services/StreamService";
 
 /**
@@ -16,7 +16,7 @@ const retroGenInit: Handler = async (
   event: any,
   context?: Context,
   callback?: Callback
-): Promise<void | Array<PromiseResult<SendMessageResult, AWSError>>> => {
+): Promise<void | Array<SendMessageCommandOutput>> => {
   if (!event) {
     console.error("ERROR: event is not defined.");
     return;
@@ -28,7 +28,7 @@ const retroGenInit: Handler = async (
   // Instantiate the Simple Queue Service
   const sqService: SQService = Injector.resolve<SQService>(SQService);
   const sendMessagePromises: Array<
-    Promise<PromiseResult<SendMessageResult, AWSError>>
+    Promise<SendMessageCommandOutput>
   > = [];
 
   // Add each record to the queue
@@ -36,7 +36,7 @@ const retroGenInit: Handler = async (
     sendMessagePromises.push(sqService.sendMessage(JSON.stringify(record)));
   });
 
-  return Promise.all(sendMessagePromises).catch((error: AWSError) => {
+  return Promise.all(sendMessagePromises).catch((error: ServiceException) => {
     console.error(error);
     throw error;
   });
